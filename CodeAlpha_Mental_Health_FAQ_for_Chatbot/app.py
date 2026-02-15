@@ -9,7 +9,7 @@ from nltk.stem import WordNetLemmatizer
 from nltk.tokenize import word_tokenize
 from sklearn.metrics.pairwise import cosine_similarity
 
-# Initialize Flask app
+
 app = Flask(__name__)
 CORS(app) 
 
@@ -37,13 +37,12 @@ lemmatizer = WordNetLemmatizer()
 stop_words = set(stopwords.words('english'))
 
 def preprocess_text(text):
-    # 1. Lowercase
+
     text = str(text).lower()
-    # 2. Remove punctuation
+    
     text = re.sub(r'[^\w\s]', '', text)
-    # 3. Tokenize
+
     tokens = word_tokenize(text)
-    # 4. Remove stopwords and lemmatize
     cleaned_tokens = [lemmatizer.lemmatize(word) for word in tokens if word not in stop_words]
     return " ".join(cleaned_tokens)
 
@@ -55,7 +54,6 @@ def ask_chatbot():
     if not user_input:
         return jsonify({"answer": "Please ask a valid question."})
 
-    # Process input and find the best match
     cleaned_input = preprocess_text(user_input)
     input_vector = vectorizer.transform([cleaned_input])
     similarity_scores = cosine_similarity(input_vector, tfidf_matrix)
@@ -63,7 +61,6 @@ def ask_chatbot():
     best_match_index = similarity_scores.argmax()
     highest_score = similarity_scores[0, best_match_index]
     
-    # Fallback response if the confidence is too low
     if highest_score < 0.20:
         return jsonify({"answer": "I'm sorry, I don't have enough information on that specific topic. Could you rephrase your question?"})
     
