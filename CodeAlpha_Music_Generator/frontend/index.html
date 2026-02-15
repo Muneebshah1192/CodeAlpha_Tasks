@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Neural Symphony · chromatic studio</title>
+    <!-- combine MIDI.js + soundfont -->
+    <script src="https://cdn.jsdelivr.net/combine/npm/midi-player-js@2.0.14,npm/soundfont-player@0.3.0"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            /* BRIGHT, JOYFUL ANIMATED GRADIENT BACKGROUND */
+            background: linear-gradient(145deg, #ffe8df, #ffd9f0, #d0ebff, #e3f0d5);
+            background-size: 400% 400%;
+            animation: dreamyDrift 16s ease infinite alternate;
+            position: relative;
+            margin: 0;
+            padding: 16px;
+        }
+
+        @keyframes dreamyDrift {
+            0% { background-position: 0% 30%; }
+            25% { background-position: 50% 60%; }
+            50% { background-position: 100% 40%; }
+            75% { background-position: 60% 10%; }
+            100% { background-position: 20% 80%; }
+        }
+
+        /* floating glass-card with bright backdrop + vibrant blur */
+        .studio-card {
+            width: 500px;
+            padding: 50px 40px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(24px) saturate(300%);
+            -webkit-backdrop-filter: blur(24px) saturate(300%);
+            border-radius: 64px;
+            border: 2px solid rgba(255, 255, 255, 0.7);
+            box-shadow: 0 45px 85px rgba(235, 120, 200, 0.25), 0 0 0 2px rgba(255,255,240,0.5) inset;
+            transition: transform 0.3s ease, box-shadow 0.4s ease;
+            animation: cardGlow 6s infinite alternate;
+        }
+
+        .studio-card:hover {
+            transform: scale(1.01) translateY(-8px);
+            box-shadow: 0 55px 100px rgba(255, 160, 210, 0.45), 0 0 0 4px rgba(255,255,255,0.7) inset;
+        }
+
+        @keyframes cardGlow {
+            0% { border-color: rgba(255, 230, 200, 0.9); }
+            100% { border-color: rgba(255, 255, 255, 1); }
+        }
+
+        h1 {
+            margin: 0 0 8px;
+            font-weight: 700;
+            font-size: 2.7rem;
+            background: linear-gradient(125deg, #382066, #c43e7a, #ff9f5e);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: -0.5px;
+            filter: drop-shadow(2px 4px 12px rgba(255,255,255,0.5));
+            animation: textShimmer 5s infinite alternate;
+        }
+
+        @keyframes textShimmer {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 100% 50%; }
+        }
+
+        .subhead {
+            color: #2d1b44;
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 35px;
+            background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(4px);
+            display: inline-block;
+            padding: 8px 24px;
+            border-radius: 100px;
+            border: 1px solid white;
+            box-shadow: 0 4px 12px rgba(255,180,200,0.3);
+        }
+
+        select {
+            background: rgba(255, 255, 255, 0.7);
+            border: 2px solid rgba(255, 255, 255, 0.9);
+            color: #1e1230;
+            font-weight: 600;
+            padding: 16px 24px;
+            border-radius: 50px;
+            width: 100%;
+            margin-bottom: 28px;
+            outline: none;
+            font-size: 1rem;
+            appearance: none;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="%234a2c6d" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>');
+            background-repeat: no-repeat;
+            background-position: right 20px center;
+            background-size: 18px;
+            box-shadow: 0 10px 20px -8px rgba(210, 120, 200, 0.4);
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        select:hover {
+            background-color: rgba(255, 255, 255, 0.95);
+            border-color: #f9b5d0;
+            transform: scale(1.02);
+            box-shadow: 0 20px 25px -8px #ffa0d0;
+        }
+
+        .btn {
+            padding: 18px 22px;
+            border-radius: 60px;
+            border: none;
+            cursor: pointer;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+            width: 100%;
+            text-decoration: none;
+            margin-top: 18px;
+            font-size: 1.1rem;
+            letter-spacing: 0.3px;
+            transition: all 0.25s ease;
+            border: 2px solid transparent;
+            background-origin: border-box;
+            background-clip: padding-box, border-box;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.7), transparent);
+            transition: left 0.7s;
+            pointer-events: none;
+            border-radius: 60px;
+        }
+
+        .btn:hover::before {
+            left: 120%;
+        }
+
+        .btn-gen {
+            background: linear-gradient(135deg, #ffd2b3, #ffb0d9, #c2a6ff);
+            color: #1c0e2f;
+            border-color: #ffffff;
+            box-shadow: 0 15px 30px -8px #f89ac0, 0 0 0 3px rgba(255,255,255,0.5) inset;
+        }
+
+        .btn-gen:not(:disabled):hover {
+            background: linear-gradient(145deg, #ffe6c5, #ffc2e5, #dbc0ff);
+            transform: scale(1.02) translateY(-4px);
+            box-shadow: 0 28px 35px -8px #ff87b9, 0 0 0 5px white inset;
+        }
+
+        .btn-gen:disabled {
+            opacity: 0.6;
+            filter: grayscale(0.3);
+            transform: scale(0.98);
+        }
+
+        .btn-down {
+            background: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(12px);
+            color: #312353;
+            border: 3px solid rgba(255, 255, 255, 0.75);
+            font-weight: 600;
+        }
+
+        .btn-down:hover {
+            background: rgba(255, 255, 255, 0.8);
+            border-color: white;
+            color: #1d0b33;
+            transform: scale(1.02) translateY(-3px);
+            box-shadow: 0 25px 25px -10px #ffb0dd;
+        }
+
+        i {
+            font-size: 1.4rem;
+            filter: drop-shadow(0 2px 4px rgba(255,215,215,0.6));
+        }
+
+        #downloadArea {
+            display: none;
+            margin-top: 28px;
+            border-top: 3px dashed rgba(255, 255, 255, 0.8);
+            padding-top: 28px;
+            animation: slideReveal 0.7s cubic-bezier(0.2, 0.9, 0.3, 1.1);
+        }
+
+        @keyframes slideReveal {
+            0% { opacity: 0; transform: translateY(25px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        #status {
+            margin-top: 30px;
+            font-size: 13px;
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(15px);
+            padding: 12px 24px;
+            border-radius: 100px;
+            color: #1f1036;
+            border: 1px solid rgba(255, 255, 255, 0.9);
+            display: inline-block;
+            box-shadow: 0 6px 14px rgba(255,200,220,0.6);
+            transition: 0.3s;
+        }
+
+        .error-message {
+            color: #d63031;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 8px 16px;
+            border-radius: 50px;
+            margin-top: 10px;
+            font-weight: 600;
+        }
+
+        .fa-wand-magic-sparkles, .fa-file-download {
+            animation: spark 3s infinite alternate;
+        }
+
+        @keyframes spark {
+            0% { filter: drop-shadow(0 0 2px gold); }
+            100% { filter: drop-shadow(0 0 10px #ffa8d2); }
+        }
+
+        @media (max-width: 550px) {
+            .studio-card { width: 96%; padding: 40px 24px; }
+            h1 { font-size: 2.2rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="studio-card">
+        <h1><i class="fas fa-sparkles" style="font-size: 2rem; vertical-align: middle;"></i> neural symphony</h1>
+        <div class="subhead">✦ LSTM · bright edition ✦</div>
+
+        <select id="instr">
+            <option value="acoustic_grand_piano">🎹 Acoustic Grand Piano</option>
+            <option value="violin">🎻 Orchestral Violin</option>
+            <option value="acoustic_guitar_nylon">🎸 Acoustic Guitar</option>
+        </select>
+
+        <button type="button" class="btn btn-gen" id="genBtn" onclick="generate()">
+            <i class="fas fa-wand-magic-sparkles"></i> Compose Track
+        </button>
+
+        <div id="downloadArea">
+            <a href="#" class="btn btn-down" id="downBtn" download>
+                <i class="fas fa-file-download"></i> Export MIDI
+            </a>
+        </div>
+        <div id="status">✨ ready to compose</div>
+        <div id="errorDisplay" class="error-message" style="display: none;"></div>
+    </div>
+
+    <script>
+        // Audio context and globals - removed player-related variables
+        let midiUrl = '';
+        let currentMidiBlob = null;
+
+        function showError(msg) {
+            const errorDiv = document.getElementById('errorDisplay');
+            errorDiv.style.display = 'block';
+            errorDiv.innerText = '⚠️ ' + msg;
+            setTimeout(() => {
+                errorDiv.style.display = 'none';
+            }, 5000);
+        }
+
+        async function generate() {
+            const btn = document.getElementById('genBtn');
+            const status = document.getElementById('status');
+            const errorDiv = document.getElementById('errorDisplay');
+            
+            btn.disabled = true;
+            status.innerText = "🎛️ AI is weaving melodies...";
+            errorDiv.style.display = 'none';
+
+            try {
+                console.log("Sending generate request to backend...");
+                const res = await fetch('http://127.0.0.1:5000/generate');
+                const data = await res.json();
+                
+                console.log("Backend response:", data);
+                
+                if (data.status === 'success' && data.file_url) {
+                    midiUrl = data.file_url;
+                    
+                    // Pre-fetch the MIDI file to verify it exists
+                    const midiRes = await fetch(midiUrl);
+                    if (!midiRes.ok) {
+                        throw new Error(`MIDI file not accessible (${midiRes.status})`);
+                    }
+                    
+                    // Store as blob for download
+                    currentMidiBlob = await midiRes.blob();
+                    
+                    document.getElementById('downloadArea').style.display = 'block';
+                    document.getElementById('downBtn').href = midiUrl;
+                    status.innerText = "🌈 Composition complete!";
+                } else {
+                    throw new Error(data.message || "Unknown error from backend");
+                }
+            } catch (e) {
+                console.error("Generation error:", e);
+                status.innerText = "❌ Generation failed";
+                showError(e.message || "Could not connect to backend. Is the server running?");
+            } finally {
+                btn.disabled = false;
+            }
+        }
+
+        // Health check on load
+        window.addEventListener('load', async () => {
+            try {
+                const res = await fetch('http://127.0.0.1:5000/health');
+                const data = await res.json();
+                console.log("Backend health check:", data);
+            } catch (e) {
+                console.warn("Backend not responding. Make sure server is running on port 5000");
+                showError("Backend server not running. Start with: python app.py");
+            }
+        });
+    </script>
+</body>
+</html>
